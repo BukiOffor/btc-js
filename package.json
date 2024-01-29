@@ -4,7 +4,8 @@
   "description": "A protocol that interacts with btc network",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,10 +16,10 @@
     "bitcoinjs-lib": "^6.1.5",
     "coinkey": "^3.0.0",
     "ecpair": "^2.1.0",
-    "ethereumjs-util": "^7.1.5",
     "ethers": "^6.10.0",
     "hdkey": "^2.1.0",
-    "js-stellar-sdk": "^0.0.2",
     "tiny-secp256k1": "^2.2.3"
+    
+    
   }
 }

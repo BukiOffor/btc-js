@@ -48,11 +48,12 @@ let chains = {
 async function getBalance(chain,address){
 
     if (chain == 0 ) {
-        try {
-                const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
-                const balance = response.data[address].final_balance / 100000000;
-                return balance.toString()
-            } catch (error) {
+        try{
+            const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
+            const balance = response.data[address].final_balance / 100000000;
+            return balance.toString()
+            
+        } catch (error) {
                 return null
             }
     }else if (chain == 60) {

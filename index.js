@@ -5,8 +5,9 @@ const bip39 = require("bip39");
 const HDKey = require("hdkey");
 const CoinKey = require("coinkey");
 const ethers = require("ethers");
-const eu = require('ethereumjs-util');
 var StellarSdk = require('@stellar/stellar-sdk');
+const axios = require('axios');
+
 
 
 //const seed = bip39.generateMnemonic(256); // 24 words seed
@@ -28,7 +29,7 @@ function generate_mnemonic(rng=null){
 
 let chains = {
     0 : {
-        "rpc": "",
+        "rpc": "https://go.getblock.io/13da34445b75410990d6396a19e172dc",
         "name": "bitcoin"
     },
     60 : {
@@ -41,24 +42,40 @@ let chains = {
     }
 }
 
-
+/// This function takes the chain id of the blockchain 
+/// and the address of the user whose balance is being fetched.
+/// it returns the balance in a string format
 async function getBalance(chain,address){
 
-    if(chain == 0 ){
-        return 0
+    if (chain == 0 ) {
+        try {
+                const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
+                const balance = response.data[address].final_balance / 100000000;
+                return balance.toString()
+            } catch (error) {
+                return null
+            }
     }else if (chain == 60) {
-        const provider = new ethers.JsonRpcProvider(chains[60].rpc);
-        const balance_in_wei = await provider.getBalance(address);
-        const balance = ethers.parseEther(balance_in_wei.toString());
-        return balance.toString()
-    }else {
+        try{
+            const provider = new ethers.JsonRpcProvider(chains[60].rpc);
+            const balance_in_wei = await provider.getBalance(address);
+            const balance = ethers.parseEther(balance_in_wei.toString());
+            return balance.toString()
+        } catch (error){
+            return null
+        }
+    }else if (chain == 148) {
         return 0
     }
+        
+    return null
+    
 }
 
 
+
 async function create_wallet(chain, seed){
-    if(chain == 0 ){
+    if (chain == 0 ) {
         const info = await bitcoin_wallet(seed);
         return info
     }else if (chain == 60) {
@@ -142,6 +159,9 @@ async function main(mnemonic){
     console.log(await bitcoin_wallet(mnemonic))
     console.log(await ethereum(mnemonic))
     console.log(await stellar(mnemonic))
+    const btc_balance = await getBalance(0,"1MnDPsQjp2YjktCst3ih5jkBTZ7ax8rtKX");
+    const eth_balance = await getBalance(60,"0x1fa62cda48e0b938fa3C2F97b04fcAF65504BB36");
+    console.log(eth_balance)
 
 }
 let seed = generate_mnemonic()

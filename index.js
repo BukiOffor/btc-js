@@ -11,13 +11,12 @@ var StellarSdk = require('@stellar/stellar-sdk');
 
 
 
-
-
 //const seed = bip39.generateMnemonic();
 const seed_phrase = "monster biology normal element armor subject misery coyote run basket pony grow"
 
 const TESTNET = bitcoin.networks.testnet;
 const ECPair = ECPairFactory(ecc);
+
 
 async function btc_addr(mnemonic){    
     const seed = bip39.mnemonicToSeedSync(mnemonic);
@@ -40,7 +39,6 @@ async function btc_addr(mnemonic){
     console.log(info)
     return info
 }
-
 
 async function eth_addr(mnemonic){
     const seed = bip39.mnemonicToSeedSync(mnemonic);
@@ -75,7 +73,6 @@ async function stellar(mnemonic){
     return(info)
 
 }
-
 
 async function main(mnemonic){
     console.log("seed: ", mnemonic)

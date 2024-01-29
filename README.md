@@ -1,5 +1,5 @@
 # Multichain Wallets
-    One Seed to rule them all, One Key to find them, One Path to bring them all, And in cryptography bind them.
+>One Seed to rule them all, One Key to find them, One Path to bring them all, And in cryptography bind them.
 
 ## Abstract
 

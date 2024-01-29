@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@stellar/stellar-sdk": "^11.2.1",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "bitcoinjs-lib": "^6.1.5",
@@ -17,6 +18,7 @@
     "ethereumjs-util": "^7.1.5",
     "ethers": "^6.10.0",
     "hdkey": "^2.1.0",
+    "js-stellar-sdk": "^0.0.2",
     "tiny-secp256k1": "^2.2.3"
   }
 }

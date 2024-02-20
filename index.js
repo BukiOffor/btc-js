@@ -1,6 +1,12 @@
 const express = require('express');
 const cors =  require('cors'); 
-const { create_wallet, generate_mnemonic, getBalance } = require('./scripts')
+const { 
+    create_wallet, 
+    generate_mnemonic, 
+    getBalance,
+    sendTransactionEth, 
+    sendBitcoin } 
+= require('./scripts');
 
 require('dotenv').config()
 
@@ -63,6 +69,27 @@ app.get('/ethereum_balance/:address', async (req, res) => {
         res.status(400).send("Something Went Wrong");
     }
 })
+
+app.post('/bitcoin/transfer', async (req, res) => {
+    const { privateKey, sourceAddress, destinationAddress, amount } = req.body;
+    const data = await sendBitcoin(privateKey, sourceAddress, destinationAddress, amount);
+    if (data) {
+        res.send(data)
+    } else {
+        res.status(400).send("Something Went Wrong");
+    }
+})
+
+app.post('/ethereum/transfer', async (req, res) => {
+    const { privateKey, amount, toAddress } = req.body;
+    const data = await sendTransactionEth(privateKey, amount, toAddress);
+    if (data) {
+        res.send(data)
+    } else {
+        res.status(400).send("Something Went Wrong");
+    }
+})
+
 
 const port = 8000
 app.listen(port, () => {

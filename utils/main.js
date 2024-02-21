@@ -12,6 +12,7 @@ var StellarSdk = require('@stellar/stellar-sdk');
 
 //const seed = bip39.generateMnemonic(256); // 24 words seed
 const seed_phrase = "monster biology normal element armor subject misery coyote run basket pony grow"
+const receiver_phrase = "evil mango axis believe witness steel enroll abstract twice word describe find"
 
 const TESTNET = bitcoin.networks.testnet;
 const ECPair = ECPairFactory(ecc);
@@ -103,12 +104,12 @@ async function bitcoin_wallet(mnemonic){
             WIF: coinKey.privateWif,                 // Wallet Import Format (WIF) private key
             }; 
 
-            // Generate a testnet address  
-            //const { address } = bitcoin.payments.p2pkh({ pubkey: child.publicKey, network: TESTNET, });
+            //Generate a testnet address  
+            const { address } = bitcoin.payments.p2pkh({ pubkey: child.publicKey, network: TESTNET, });
     
             // generate a segwit Address
-            //const { address } = bitcoin.payments.p2wpkh({ pubkey: child.publicKey });  
-            return info
+            const { segwit } = bitcoin.payments.p2wpkh({ pubkey: child.publicKey, network: TESTNET });  
+            return address
         }catch (error) {
             return null
         }
@@ -158,7 +159,7 @@ async function stellar(mnemonic){
 }
 
 async function main(mnemonic){
-    //console.log(await bitcoin_wallet(mnemonic))
+    console.log(await bitcoin_wallet(mnemonic))
     console.log(await ethereum(mnemonic))
     //console.log(await stellar(mnemonic))
     //const btc_balance = await getBalance(0,"1MnDPsQjp2YjktCst3ih5jkBTZ7ax8rtKX");
@@ -168,6 +169,7 @@ async function main(mnemonic){
 
 }
 let seed = generate_mnemonic()
+//console.log(seed)
 main(seed_phrase).then(()=>{
 })
 .catch(err => {

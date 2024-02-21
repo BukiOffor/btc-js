@@ -51,10 +51,17 @@ async function getBalance(chain,address){
 
     if (chain == 0 ) {
         try{
+            // MAINNET
+            //const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
+            //console.log(response)
+            //const balance = response.data[address].final_balance / 100000000;
 
-            const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
-            console.log(response)
-            const balance = response.data[address].final_balance / 100000000;
+            // TESTNET
+            let url = `https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full?limit=50`
+            const response = await axios.get(url);
+            // console.log(response)
+            const balance = response.data.final_balance / 100000000;
+            
             return balance.toString()
             
         } catch (error) {
@@ -202,17 +209,12 @@ async function sendTransactionEth(privateKey,amount,toAddress){
 
 async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSend, testnet=true) {
   try {
-    // const privateKey =
-    //   "6756e6564d3c74b857d5800113f35878e5a854f2fce09c780265b94e53b6bc93";
-    // const sourceAddress = "mvWqrftxCJa5eSKp229gkZbMf2XXrfZe9p";
     const satoshiToSend = amountToSend * 100000000;
     let fee = 0;
     let inputCount = 0;
     let outputCount = 2;
 
-    const recommendedFee = await axios.get(
-      "https://bitcoinfees.earn.com/api/v1/fees/recommended"
-    );
+    const recommendedFee =  1 // await axios.get("https://bitcoinfees.earn.com/api/v1/fees/recommended");
 
     const transaction = new bitcore.Transaction();
     let totalAmountAvailable = 0;
@@ -223,6 +225,9 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
         url: `https://blockstream.info/testnet/api/address/${sourceAddress}/utxo`,
     });
     const utxos = resp.data
+    if (utxos.length === 0) {
+        throw new Error("Balance is too low for this transaction");
+      }
 
     for (const utxo of utxos) {
       let input = {};
@@ -245,7 +250,10 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     const transactionSize =
       inputCount * 180 + outputCount * 34 + 10 - inputCount;
 
-    fee = transactionSize * recommendedFee.data.hourFee / 3; // satoshi per byte
+
+
+    fee = transactionSize * 1 //recommendedFee.data.hourFee / 3; // satoshi per byte
+
     if (testnet) {
       fee = transactionSize * 1 // 1 sat/byte is fine for testnet
     }
@@ -262,13 +270,18 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     transaction.change(sourceAddress);
 
     //manually set transaction fees: 20 satoshis per byte
-    transaction.fee(Math.round(fee));
+    //transaction.fee(Math.round(fee)); 
+
+    // automatically calculate the fees
+    transaction.getFee();
+
 
     // Sign transaction with your private key
     transaction.sign(privateKey);
 
     // serialize Transactions
-    const serializedTransaction = transaction.serialize();
+    const serializedTransaction = transaction.serialize({disableDustOutputs: true});
+
 
     // Send transaction
     const result = await axios({
@@ -278,7 +291,8 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     });
     return result.data;
   } catch (error) {
-    return error;
+    console.log(error);
+    return null;
   }
 };
 

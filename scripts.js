@@ -8,6 +8,7 @@ var StellarSdk = require('@stellar/stellar-sdk');
 const axios = require('axios');
 const {ethers} = require("ethers");
 const bitcore = require("bitcore-lib");
+const { abi } = require("./constants");
 
 
 
@@ -35,7 +36,7 @@ let chains = {
         "name": "bitcoin"
     },
     60 : {
-        "rpc": "https://eth-goerli.g.alchemy.com/v2/JUd33W6MxjKFCz0rLRrFrsCTpdsXLPZk",
+        "rpc": "https://eth-sepolia.g.alchemy.com/v2/BO6COcusSbwBNDRbtrQpfxl1nqpe_CRt",
         "name": "ethereum"
     },
     148: {
@@ -296,12 +297,58 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
   }
 };
 
+
+async function sendErcTokens(privateKey, contractTokenAddress, amount, recipient){
+    try{
+        const provider = new ethers.JsonRpcProvider(chains[60].rpc);
+        // Create a wallet from the private key
+        const wallet = new ethers.Wallet(privateKey, provider);
+        // Connect to the ERC-20 contract
+        const erc20Contract = new ethers.Contract(contractTokenAddress, abi, wallet);
+        const balance = await erc20Contract.balanceOf(wallet.address);
+        if (balance < amount) {
+            console.log('Insufficient balance');
+            throw new Error('Insufficient balance');
+        }
+        // Send the ERC-20 tokens to the recipient
+        const tx = await erc20Contract.transfer(recipient, amount);
+        await tx.wait();
+        console.log(`Sent ${amount} tokens to ${recipient}`);
+        return tx.hash;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+};
+    
+
+  async function getErcTokensBalance(contractTokenAddress, address){
+    try{
+        const provider = new ethers.JsonRpcProvider(chains[60].rpc);
+        // Connect to the ERC-20 contract
+        const erc20Contract = new ethers.Contract(contractTokenAddress, abi, provider);
+        const balance = await erc20Contract.balanceOf(address);
+        return balance.toString()
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+  };
+    
+
+
+
+
+
+
 module.exports = {
     getBalance,
     create_wallet,
     generate_mnemonic,
     sendTransactionEth,
-    sendBitcoin
+    sendBitcoin,
+    sendErcTokens,
+    getErcTokensBalance
 }
 
 

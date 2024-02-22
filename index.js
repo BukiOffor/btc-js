@@ -5,7 +5,10 @@ const {
     generate_mnemonic, 
     getBalance,
     sendTransactionEth, 
-    sendBitcoin } 
+    sendBitcoin ,
+    sendErcTokens,
+    getErcTokensBalance
+} 
 = require('./scripts');
 
 require('dotenv').config()
@@ -89,6 +92,28 @@ app.post('/ethereum/transfer', async (req, res) => {
         res.status(400).send("Something Went Wrong");
     }
 })
+
+app.post('/tokens/transfer', async (req, res) => {
+    const { contractTokenAddress,privateKey, amount, toAddress } = req.body;
+    const data = await sendErcTokens(privateKey, contractTokenAddress, amount, toAddress);
+    if (data) {
+        res.send(data)
+    } else {
+        res.status(400).send("Something Went Wrong");
+    }
+})
+
+app.get('/token/balance/:contractTokenAddress/:address', async (req, res) => {
+    const { contractTokenAddress,address } = req.params;
+    console.log(contractTokenAddress,address)
+    const data = await getErcTokensBalance(contractTokenAddress, address);
+    if (data) {
+        res.send(data)
+    } else {
+        res.status(400).send("Something Went Wrong");
+    }
+})
+
 
 
 const port = 8000

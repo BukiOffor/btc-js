@@ -238,7 +238,7 @@ curl -X POST -H "Content-Type: application/json" -d '{privateKey ... }' http://l
 ```
 
 #### Response
-```json
+```
 /// Transaction hash
 "711f94e004fdfaab2acc29177151ead454750614bcb07bfd88be4328d0f3c865"
 ```
@@ -271,7 +271,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"privateKey ..."}' http://
 ```
 
 #### Response
-```json
+```
 /// Transaction hash
 0x711f94e004fdfaab2acc29177151ead454750614bcb07bfd88be4328d0f3c865
 

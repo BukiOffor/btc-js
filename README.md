@@ -208,6 +208,77 @@ Retrieves the balance of an Ethereum wallet based on its address.
 curl http://localhost:8000/ethereum_balance/your-wallet-address
 ```
 
+
+
+### 7. Transfer Bitcoin
+
+#### Endpoint
+
+- **POST** `/bitcoin/transfer`
+
+#### Request Body
+
+```json
+{
+    "privateKey": "<your private key>",
+    "amount": "0.0000001",
+    "sourceAddress": "<address of the sender>",
+    "destinationAddress": "n2Bbspn1D6UQZXKgo6j3vihaeFQbRXnc94"
+}
+```
+
+#### Description
+
+Sends a transaction to an bitcoin address using the provided key.
+
+#### Example
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{privateKey ... }' http://localhost:8000/bitcoin/transfer
+```
+
+#### Response
+```json
+/// Transaction hash
+"711f94e004fdfaab2acc29177151ead454750614bcb07bfd88be4328d0f3c865"
+```
+
+
+### 8. Transfer Ethereum
+
+#### Endpoint
+
+- **POST** `/ethereum/transfer`
+
+#### Request Body
+
+```json
+{
+    "privateKey": "your private key",
+    "amount": "0.0000001",
+    "toAddress": "0xB2A5F2CCe57a4761e4dDCd1f78b860798A70d4a0",
+}
+```
+
+#### Description
+
+Sends a transaction to an Ethereum wallet using the provided key.
+
+#### Example
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"privateKey ..."}' http://localhost:8000/ethereum/transfer
+```
+
+#### Response
+```json
+/// Transaction hash
+0x711f94e004fdfaab2acc29177151ead454750614bcb07bfd88be4328d0f3c865
+
+```
+
+
+
 ## Conclusion
 
-The wallet service provides simple endpoints for generating mnemonic seeds, creating wallets for Bitcoin, Ethereum, and Stellar, and checking the balance of Bitcoin and Ethereum wallets. Use the provided examples to interact with the service.
+The wallet service provides simple endpoints for generating mnemonic seeds, creating wallets for Bitcoin, Ethereum, and Stellar, and checking the balance of Bitcoin and Ethereum wallets. Also sends a transaction when the private key is provided. Use the provided examples to interact with the service.

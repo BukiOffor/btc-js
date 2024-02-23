@@ -129,6 +129,7 @@ async function bitcoin_wallet(mnemonic){
     
 }
 
+
 async function ethereum(mnemonic){
     if (validate_mnemonic(mnemonic)){
         try{
@@ -316,7 +317,6 @@ async function sendErcTokens(privateKey, contractTokenAddress, amount, recipient
         console.log(`Sent ${amount} tokens to ${recipient}`);
         return tx.hash;
     } catch (error) {
-        console.error(error);
         return null;
     }
 };
@@ -330,12 +330,10 @@ async function sendErcTokens(privateKey, contractTokenAddress, amount, recipient
         const balance = await erc20Contract.balanceOf(address);
         return balance.toString()
     } catch (error) {
-        console.error(error);
         return null;
     }
   };
     
-
 
 
 

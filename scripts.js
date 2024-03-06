@@ -72,8 +72,8 @@ async function getBalance(chain,address){
         try{
             const provider = new ethers.JsonRpcProvider(chains[60].rpc);
             const balance_in_wei = await provider.getBalance(address);
-            const balance = ethers.parseEther(balance_in_wei.toString());
-            return balance.toString()
+            const balance = ethers.formatEther(balance_in_wei.toString());
+            return (balance).toString()
         } catch (error){
             return null
         }
@@ -110,7 +110,7 @@ async function bitcoin_wallet(mnemonic){
             const coinKey = new CoinKey(child.privateKey, bitcoin.networks.bitcoin);
             
             // MainNet Account
-            
+
             // const info = {
             // address: coinKey.publicAddress,          // Bitcoin public address
             // path,                                    // BIP44 path

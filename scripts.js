@@ -226,7 +226,9 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     let inputCount = 0;
     let outputCount = 2;
 
-    const recommendedFee =  1 // await axios.get("https://bitcoinfees.earn.com/api/v1/fees/recommended");
+    //const recommendedFee =  1 // await axios.get("https://bitcoinfees.earn.com/api/v1/fees/recommended");
+    const recommendedFee =  await axios.get("https://api.blockchain.info/mempool/fees");  
+
 
     const transaction = new bitcore.Transaction();
     let totalAmountAvailable = 0;
@@ -273,7 +275,9 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
 
 
 
-    fee = transactionSize * 1 //recommendedFee.data.hourFee / 3; // satoshi per byte
+    //fee = transactionSize * 1 //recommendedFee.data.hourFee / 3; // satoshi per byte
+    fee = transactionSize * recommendedFee.regular;
+
 
     if (testnet) {
       fee = transactionSize * 1 // 1 sat/byte is fine for testnet
@@ -305,6 +309,7 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
 
 
     // Send Test transaction
+    
     // const result = await axios({
     //   method: "POST",
     //   url: `https://blockstream.info/testnet/api/tx`,

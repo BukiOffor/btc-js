@@ -36,7 +36,8 @@ let chains = {
         "name": "bitcoin"
     },
     60 : {
-        "rpc": "https://eth-sepolia.g.alchemy.com/v2/BO6COcusSbwBNDRbtrQpfxl1nqpe_CRt",
+        "rpc": "https://eth-mainnet.g.alchemy.com/v2/nensquDAxgnxhRUzOaCOZJMsHdDgvYlT",
+        // "rpc": "https://eth-sepolia.g.alchemy.com/v2/BO6COcusSbwBNDRbtrQpfxl1nqpe_CRt", //test-net
         "name": "ethereum"
     },
     148: {
@@ -53,15 +54,15 @@ async function getBalance(chain,address){
     if (chain == 0 ) {
         try{
             // MAINNET
-            //const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
-            //console.log(response)
-            //const balance = response.data[address].final_balance / 100000000;
+            const response = await axios.get(`https://blockchain.info/balance?active=${address}`);
+            console.log(response)
+            const balance = response.data[address].final_balance / 100000000;
 
-            // TESTNET
-            let url = `https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full?limit=50`
-            const response = await axios.get(url);
-            // console.log(response)
-            const balance = response.data.final_balance / 100000000;
+            // // TESTNET
+            // let url = `https://api.blockcypher.com/v1/btc/test3/addrs/${address}/full?limit=50`
+            // const response = await axios.get(url);
+            // // console.log(response)
+            // const balance = response.data.final_balance / 100000000;
             
             return balance.toString()
             
@@ -109,23 +110,23 @@ async function bitcoin_wallet(mnemonic){
             const child = hdKey.derive(path);
             const coinKey = new CoinKey(child.privateKey, bitcoin.networks.bitcoin);
             
-            // MainNet Account
+            //MainNet Account
 
-            // const info = {
-            // address: coinKey.publicAddress,          // Bitcoin public address
-            // path,                                    // BIP44 path
-            // privateKey: coinKey.privateKey.toString("hex"), // Private key in hexadecimal
-            // WIF: coinKey.privateWif,                 // Wallet Import Format (WIF) private key
-            // }; 
+            const info = {
+            address: coinKey.publicAddress,          // Bitcoin public address
+            path,                                    // BIP44 path
+            privateKey: coinKey.privateKey.toString("hex"), // Private key in hexadecimal
+            WIF: coinKey.privateWif,                 // Wallet Import Format (WIF) private key
+            }; 
 
             // Generate a testnet address  
-            const { address } = bitcoin.payments.p2pkh({ pubkey: child.publicKey, network: TESTNET, });
-            const info = {
-                address: address,          // Bitcoin public address
-                path,                                    // BIP44 path
-                privateKey: coinKey.privateKey.toString("hex"), // Private key in hexadecimal
-                WIF: coinKey.privateWif,                 // Wallet Import Format (WIF) private key
-                }; 
+            // const { address } = bitcoin.payments.p2pkh({ pubkey: child.publicKey, network: TESTNET, });
+            // const info = {
+            //     address: address,          // Bitcoin public address
+            //     path,                                    // BIP44 path
+            //     privateKey: coinKey.privateKey.toString("hex"), // Private key in hexadecimal
+            //     WIF: coinKey.privateWif,                 // Wallet Import Format (WIF) private key
+            //     }; 
     
             // generate a segwit Address
             //const { address } = bitcoin.payments.p2wpkh({ pubkey: child.publicKey });  
@@ -307,7 +308,7 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
   }
 };
 
-
+// batch transactions while charging a fee
 async function sendErcTokens(privateKey, contractTokenAddress, amount, recipient){
     try{
         const provider = new ethers.JsonRpcProvider(chains[60].rpc);
@@ -366,6 +367,7 @@ async function sendStellarXlm(privateKey, destinationId){
         return server.loadAccount(sourceKeys.publicKey());
     })
     .then(function (sourceAccount) {
+    
         // Start building the transaction.
         transaction = new StellarSdk.TransactionBuilder(sourceAccount, {
         fee: StellarSdk.BASE_FEE,
@@ -402,7 +404,22 @@ async function sendStellarXlm(privateKey, destinationId){
     });
 }
 
-
+async function getStellarBalance(destinationId){
+    
+    var server = new StellarSdk.Server("https://horizon-testnet.stellar.org");
+    server
+    .loadAccount(destinationId)
+    // If the account is not found, surface a nicer error message for logging.
+    .catch(function (error) {
+        if (error instanceof StellarSdk.NotFoundError) {
+        throw new Error("The destination account does not exist!");
+        } else return error;
+    })
+    // If there was no error, load up-to-date information on your account.
+    .then(function (account) {
+        console.log(account)
+    })
+}
 
 
 module.exports = {
@@ -413,6 +430,7 @@ module.exports = {
     sendBitcoin,
     sendErcTokens,
     getErcTokensBalance,
+    getStellarBalance,
     sendStellarXlm
 }
 

@@ -232,10 +232,19 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     let totalAmountAvailable = 0;
 
     let inputs = [];
+    
+    // TESTNET
+    // const resp = await axios({
+    //     method: "GET",
+    //     url: `https://blockstream.info/testnet/api/address/${sourceAddress}/utxo`,
+    // });
+    
+    // MAINNET
     const resp = await axios({
         method: "GET",
         url: `https://blockstream.info/testnet/api/address/${sourceAddress}/utxo`,
     });
+
     const utxos = resp.data
     if (utxos.length === 0) {
         throw new Error("Balance is too low for this transaction");
@@ -295,12 +304,21 @@ async function sendBitcoin (privateKey,sourceAddress,recieverAddress, amountToSe
     const serializedTransaction = transaction.serialize({disableDustOutputs: true});
 
 
-    // Send transaction
+    // Send Test transaction
+    // const result = await axios({
+    //   method: "POST",
+    //   url: `https://blockstream.info/testnet/api/tx`,
+    //   data: serializedTransaction,
+    // });
+
+    // MainNet
     const result = await axios({
-      method: "POST",
-      url: `https://blockstream.info/testnet/api/tx`,
-      data: serializedTransaction,
-    });
+        method: "POST",
+        url: `https://blockstream.info/api/tx`,
+        data: serializedTransaction,
+      });
+
+
     return result.data;
   } catch (error) {
     console.log(error);

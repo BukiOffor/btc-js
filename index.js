@@ -8,7 +8,8 @@ const {
     sendTransactionEth, 
     sendBitcoin ,
     sendErcTokens,
-    getErcTokensBalance
+    getErcTokensBalance,
+    sendBep20Tokens
 } 
 = require('./scripts');
 
@@ -101,6 +102,7 @@ app.post('/tokens/transfer', async (req, res) => {
         res.send(data)
     } else {
         res.status(400).send("Something Went Wrong");
+
     }
 })
 
@@ -112,6 +114,17 @@ app.get('/token/balance/:contractTokenAddress/:address', async (req, res) => {
         res.send(data)
     } else {
         res.status(400).send("Something Went Wrong");
+    }
+})
+
+app.post('/tokens/swap', async (req, res) => {
+    const { contractTokenAddress, amount, toAddress } = req.body;
+    const data = await sendBep20Tokens(toAddress, amount, contractTokenAddress);
+    if (data) {
+        res.send(data)
+    } else {
+        res.status(400).send("Something Went Wrong");
+
     }
 })
 

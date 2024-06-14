@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { key } from '../key/index.mjs';
 
 const rpc =
-  'https://eth-mainnet.g.alchemy.com/v2/nensquDAxgnxhRUzOaCOZJMsHdDgvYlT';
+  'https://eth-sepolia.g.alchemy.com/v2/BO6COcusSbwBNDRbtrQpfxl1nqpe_CRt';
 
 /// This function takes the chain id of the blockchain
 /// and the address of the user whose balance is being fetched.

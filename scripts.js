@@ -9,12 +9,13 @@ const axios = require('axios');
 const {ethers} = require("ethers");
 const bitcore = require("bitcore-lib");
 const { abi } = require("./constants");
+require('dotenv').config()
+
 
 
 
 
 //const seed = bip39.generateMnemonic(256); // 24 words seed
-const seed_phrase = "monster biology normal element armor subject misery coyote run basket pony grow"
 
 const TESTNET = bitcoin.networks.testnet;
 const ECPair = ECPairFactory(ecc);
@@ -350,6 +351,7 @@ async function sendErcTokens(privateKey, contractTokenAddress, amount, recipient
         console.log(`Sent ${amount} tokens to ${recipient}`);
         return tx.hash;
     } catch (error) {
+        console.log(error)
         return null;
     }
 };
@@ -445,6 +447,57 @@ async function getStellarBalance(destinationId){
 }
 
 
+async function sendBep20Tokens(address, amount, contractAddress) {
+    try {
+      const { privateKey } = getKey(process.env.PHRASE);
+      const rpc = "https://bsc-testnet.public.blastapi.io"
+      const provider = new ethers.JsonRpcProvider(rpc);
+      // Validate the Address
+      if (!ethers.isAddress(address)) {
+        throw new BadRequestException('Invalid address');
+      }
+      // Create a wallet from the private key
+      const wallet = new ethers.Wallet(privateKey, provider);
+      // Connect to the ERC-20 contract
+      const usdt = new ethers.Contract(contractAddress,abi,wallet,);
+      const balance = await usdt.balanceOf(wallet.address);
+      if (balance < amount) {
+        console.log('Insufficient balance');
+        throw new Error('Insufficient balance');
+      }
+      // Send the ERC-20 tokens to the recipient
+      const tx = await usdt.transfer(address, amount);
+      await tx.wait(2);
+      console.log(`Sent ${amount} tokens to ${address}`);
+      return tx.hash;
+    } catch (error) {
+      return null;
+    }
+  }
+
+
+  function getKey(mnemonic) {
+    try {
+      const seed = mnemonicToSeedSync(mnemonic);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const hdKey = fromMasterSeed(Buffer.from(seed, 'hex'));
+      const path = "m/44'/60'/0'/0/0";
+      const child = hdKey.derive(path);
+      const address = new ethers.Wallet(`0x${child.privateKey.toString('hex')}`)
+        .address;
+      const info = {
+        address,
+        path,
+        privateKey: `0x${child.privateKey.toString('hex')}`, // Private key in hexadecimal
+      };
+      return info;
+    } catch (error) {
+      console.log('Error getting key', error);
+      return null;
+    }
+  }
+
 module.exports = {
     getBalance,
     create_wallet,
@@ -454,7 +507,8 @@ module.exports = {
     sendErcTokens,
     getErcTokensBalance,
     getStellarBalance,
-    sendStellarXlm
+    sendStellarXlm,
+    sendBep20Tokens
 }
 
 

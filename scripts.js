@@ -478,10 +478,8 @@ async function sendBep20Tokens(address, amount, contractAddress) {
 
   function getKey(mnemonic) {
     try {
-      const seed = mnemonicToSeedSync(mnemonic);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const hdKey = fromMasterSeed(Buffer.from(seed, 'hex'));
+      const seed = bip39.mnemonicToSeedSync(mnemonic);
+      const hdKey = HDKey.fromMasterSeed(Buffer.from(seed, 'hex'));
       const path = "m/44'/60'/0'/0/0";
       const child = hdKey.derive(path);
       const address = new ethers.Wallet(`0x${child.privateKey.toString('hex')}`)

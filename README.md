@@ -277,6 +277,40 @@ curl -X POST -H "Content-Type: application/json" -d '{"privateKey ..."}' http://
 
 ```
 
+### 9. Swap Tokens for Fiat
+
+#### Endpoint
+
+- **POST** `/tokens/swap`
+
+#### Request Body
+
+```json
+{
+    "contractAddress": "USDT Address",
+    "amount": "0.0000001",
+    "toAddress": "0xB2A5F2CCe57a4761e4dDCd1f78b860798A70d4a0",
+}
+```
+
+#### Description
+
+Swaps an amount of fiat for its equivalence in crypto. This amount is sent by the admin wallet that sits on the server. Returns a hash if transaction was succesful and null if unsuccesful.
+
+#### Example
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"contractAddress ..."}' http://localhost:8000/ethereum/transfer
+```
+
+#### Response
+```
+/// Transaction hash
+0x711f94e004fdfaab2acc29177151ead454750614bcb07bfd88be4328d0f3c865
+
+```
+
+
 
 
 ## Conclusion

@@ -118,8 +118,8 @@ app.get('/token/balance/:contractTokenAddress/:address', async (req, res) => {
 })
 
 app.post('/tokens/swap', async (req, res) => {
-    const { contractTokenAddress, amount, toAddress } = req.body;
-    const data = await sendBep20Tokens(toAddress, amount, contractTokenAddress);
+    const { contractAddress, amount, toAddress } = req.body;
+    const data = await sendBep20Tokens(toAddress, amount, contractAddress);
     if (data) {
         res.send(data)
     } else {
